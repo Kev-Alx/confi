@@ -1,0 +1,191 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  JASTIPER
+  USER
+}
+
+enum RequestStatus {
+  WAITING
+  DONE
+  CANCELLED
+  ACCEPTED
+  NEGOTIATING
+}
+
+enum PreorderStatus {
+  OPEN
+  TRAVELLING
+  ITEM_BOUGHT
+  LEGIT_CHECK
+  DONE
+  WAITING
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          UserRole  @default(USER)
+  ktpPhotoUrl   String?
+  namaKtp       String?
+  address       String?
+  dob           DateTime?
+
+  accounts          Account[]
+  requestsAsBuyer   Request[]       @relation("requester")
+  requestAsJastiper Request[]       @relation("accepter")
+  openNegotiation   Negotiation[]   @relation("jastiper")
+  PreOrder          PreOrder[]
+  PreorderJoins     PreorderJoins[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model VerificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+enum Category {
+  FASHION
+  SHOES
+  SNACKS
+  SKINCARE
+  MEDICINE
+  TOYS
+}
+
+model Item {
+  id             String         @id @default(cuid())
+  name           String
+  description    String
+  link           String?
+  category       Category
+  price          Int
+  amount         Int            @default(1)
+  tips           Int
+  preorderStatus PreorderStatus @default(WAITING)
+
+  photos        Media[]
+  preOrder      PreOrder?       @relation(fields: [preOrderId], references: [id])
+  preOrderId    String?
+  Request       Request[]
+  Proof         Proof[]
+  PreorderJoins PreorderJoins[]
+}
+
+model Media {
+  id     String @id @default(cuid())
+  url    String
+  itemId String
+
+  Item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model Request {
+  id           String        @id @default(cuid())
+  item         Item          @relation(fields: [itemId], references: [id])
+  itemId       String
+  location     String
+  sendLocation String?
+  buyer        User          @relation("requester", fields: [buyerId], references: [id])
+  jastiper     User?         @relation("accepter", fields: [jastiperId], references: [id])
+  jastiperId   String?
+  buyerId      String
+  createdAt    DateTime      @default(now())
+  status       RequestStatus @default(WAITING)
+  Negotiation  Negotiation[]
+  Proof        Proof[]
+}
+
+model PreOrder {
+  id            String         @id @default(cuid())
+  title         String
+  description   String
+  location      String
+  coverImage    String
+  closeDate     DateTime
+  status        PreorderStatus @default(WAITING)
+  isRequestable Boolean
+  jastiperId    String
+  jastiper      User           @relation(fields: [jastiperId], references: [id])
+  createdAt     DateTime       @default(now())
+
+  items Item[]
+}
+
+model PreorderJoins {
+  id     String @id @default(cuid())
+  amount Int
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  item   Item   @relation(fields: [itemId], references: [id])
+  itemId String
+}
+
+model Proof {
+  id        String   @id @default(cuid())
+  request   Request? @relation(fields: [requestId], references: [id])
+  requestId String?
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
+
+  inLocationPhoto       String?
+  invoicePhoto          String?
+  legitCheckCertificate String?
+  preOrderId            String?
+}
+
+model Negotiation {
+  id              String   @id @default(cuid())
+  negotiatedPrice Int
+  notes           String
+  closeDate       DateTime
+  jastiper        User?    @relation("jastiper", fields: [jastiperId], references: [id])
+  jastiperId      String
+  request         Request? @relation(fields: [requestId], references: [id])
+  requestId       String
+}
