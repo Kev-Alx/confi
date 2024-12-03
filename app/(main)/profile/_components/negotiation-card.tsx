@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { cancelNegotiation } from "@/actions/negotiations";
 import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
+import { addDotsToNumber } from "@/lib/utils";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -58,10 +59,14 @@ const NegotiationCard = ({ nego }: Props) => {
         <div className="w-full flex justify-between items-center">
           <h1 className="font-semibold text-2xl">{nego.request.item.name}</h1>
           <p className="flex gap-1 items-center font-bold text-xl">
-            Rp, {nego.request.item.tips}
+            Rp,{" "}
+            <span className="w-max">
+              {addDotsToNumber(nego.request.item.tips)}
+            </span>
             {nego.negotiatedPrice !== nego.request.item.tips && (
               <>
-                <ArrowRight className="h-5 w-5" /> {nego.negotiatedPrice}
+                <ArrowRight className="h-5 w-5" />{" "}
+                {addDotsToNumber(nego.negotiatedPrice)}
               </>
             )}
           </p>

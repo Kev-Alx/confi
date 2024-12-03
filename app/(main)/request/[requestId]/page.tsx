@@ -63,11 +63,11 @@ const Page = async ({ params }: Props) => {
           <p className="font-medium mb-4">{req.item.description}</p>
           {req.item.link && (
             <>
-              <p>
+              <p className="max-w-xl overflow-hidden">
                 Product link:
-                <span className="ml-2 text-muted-foreground">
+                <a href={req.item.link} className="ml-2 text-muted-foreground">
                   {req.item.link}
-                </span>
+                </a>
               </p>
             </>
           )}

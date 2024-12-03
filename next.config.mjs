@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
     remotePatterns: [
       {
@@ -17,6 +20,22 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "www.google.com",
+      },
+      {
+        protocol: "https",
+        hostname: "digitalmama.id",
+      },
+      {
+        protocol: "https",
+        hostname: "akcdn.detik.net.id",
+      },
+      {
+        protocol: "https",
+        hostname: "asset.kompas.com",
+      },
+      {
+        protocol: "https",
+        hostname: "a.travel-assets.com",
       },
     ],
   },

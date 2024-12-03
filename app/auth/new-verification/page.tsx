@@ -1,9 +1,13 @@
+import dynamic from "next/dynamic";
 import React from "react";
 
-import NewVerificationForm from "@/components/auth/new-verification-form";
+const DynamicComponentWithNoSSR = dynamic(
+  () => import("@/components/auth/new-verification-form"),
+  { ssr: false }
+);
 
 const Page = () => {
-  return <NewVerificationForm />;
+  return <DynamicComponentWithNoSSR />;
 };
 
 export default Page;

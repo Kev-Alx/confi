@@ -17,7 +17,7 @@ const NegotiationTab = async () => {
     },
   });
   return (
-    <div className="px-4">
+    <div className="px-4 flex flex-col gap-4">
       {negotiations.map((nego, i) => (
         <NegotiationCard nego={nego} key={"nego" + i} />
       ))}

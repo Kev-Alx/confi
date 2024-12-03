@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest } from "next/server";
 
 import { auth } from "@/auth";
 import { ITEMS_PER_PAGE } from "@/lib/config";
 import { db } from "@/lib/db";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export async function GET(req: NextRequest) {
   try {

@@ -28,7 +28,7 @@ const ItemPhotoGallery = ({ photos }: Props) => {
     return (
       <Image
         src={photos[0].url}
-        className="w-full h-full object-cover rounded-lg max-h-80"
+        className="w-full h-full object-contain rounded-lg max-h-80"
         width={430}
         height={339}
         alt="Item photo"
